@@ -87,7 +87,7 @@ const paymentSuccess = asyncHandler(async (req, res) => {
         await donation.save();
     }
 
-    res.redirect(`${process.env.BASE_URL.replace(':5000', ':3000')}/payment/success?tranId=${tranId}`);
+    res.redirect(`${process.env.BASE_URL}/payment/success?tranId=${tranId}`);
 });
 
 // @desc    Payment Fail
@@ -101,7 +101,7 @@ const paymentFail = asyncHandler(async (req, res) => {
         await donation.save();
     }
 
-    res.redirect(`${process.env.BASE_URL.replace(':5000', ':3000')}/payment/fail?tranId=${tranId}`);
+    res.redirect(`${process.env.BASE_URL}/payment/fail?tranId=${tranId}`);
 });
 
 // @desc    Payment Cancel
@@ -115,7 +115,7 @@ const paymentCancel = asyncHandler(async (req, res) => {
         await donation.save();
     }
 
-    res.redirect(`${process.env.BASE_URL.replace(':5000', ':3000')}/payment/cancel?tranId=${tranId}`);
+    res.redirect(`${process.env.BASE_URL}/payment/cancel?tranId=${tranId}`);
 });
 
 // @desc    Get all donations (Admin)

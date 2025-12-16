@@ -22,9 +22,7 @@ const Event = require('../models/eventModel');
 router.use(protect);
 router.use(admin);
 
-// Analytics Endpoint
 router.get('/analytics', async (req, res) => {
-    // Totals
     const totalDonationAllTime = await Donation.aggregate([
         { $match: { 'ssl.status': 'VALID' } },
         { $group: { _id: null, total: { $sum: '$amount' } } }
@@ -54,7 +52,6 @@ router.get('/analytics', async (req, res) => {
 
     const upcomingEvents = await Event.countDocuments({ startDateTime: { $gte: new Date() } });
 
-    // Recent Activity (Last 5 of each)
     const recentPets = await Pet.find({ isDeleted: false }).sort({ createdAt: -1 }).limit(5).select('name status createdAt');
     const recentAdoptions = await AdoptionApplication.find({}).sort({ createdAt: -1 }).limit(5).populate('userId', 'name').select('status createdAt');
     const recentDonations = await Donation.find({}).sort({ createdAt: -1 }).limit(5).select('donorName amount purpose createdAt');
@@ -83,7 +80,6 @@ router.get('/analytics', async (req, res) => {
     });
 });
 
-// Pets Admin
 router.route('/pets')
     .get(getAdminPets)
     .post(createPetAdmin);
@@ -97,13 +93,11 @@ router.route('/inquiries')
 router.route('/inquiries/:id')
     .patch(updateInquiryStatus);
 
-// Adoptions Admin
 router.route('/adoptions')
     .get(getAdoptions);
 router.route('/adoptions/:id')
     .patch(updateAdoptionStatus);
 
-// Volunteers Admin
 router.route('/volunteers')
     .get(getVolunteers);
 router.route('/volunteers/:id')

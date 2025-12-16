@@ -202,6 +202,7 @@ const getAdminPets = asyncHandler(async (req, res) => {
     }
 
     const pets = await Pet.find(query)
+        .populate('submittedByUserId', 'name email')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);

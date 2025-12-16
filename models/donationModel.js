@@ -7,6 +7,7 @@ const donationSchema = mongoose.Schema({
     amount: { type: Number, required: true },
     purpose: { type: String, enum: ['GENERAL', 'SPONSOR_PET'], default: 'GENERAL' },
     petId: { type: mongoose.Schema.Types.ObjectId, ref: 'Pet' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     ssl: {
         tranId: { type: String, required: true },
         status: { type: String, required: true }, // PENDING, VALID, FAILED, CANCELLED

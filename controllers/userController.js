@@ -120,6 +120,10 @@ const updateUser = asyncHandler(async (req, res) => {
             user.isDisabled = req.body.isDisabled;
         }
 
+        if (req.body.password) {
+            user.passwordHash = req.body.password;
+        }
+
         const updatedUser = await user.save();
 
         res.json({

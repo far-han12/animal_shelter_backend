@@ -10,7 +10,7 @@ const is_live = process.env.IS_LIVE === 'true';
 // @route   POST /api/donations/init
 // @access  Public
 const initDonation = asyncHandler(async (req, res) => {
-    const { amount, purpose, petId, donorName, donorEmail, donorPhone } = req.body;
+    const { amount, purpose, petId, donorName, donorEmail, donorPhone, userId } = req.body;
 
     if (!amount) {
         res.status(400);
@@ -54,6 +54,7 @@ const initDonation = asyncHandler(async (req, res) => {
 
     // Save initial pending donation
     await Donation.create({
+        userId, // Optional link to user
         donorName, donorEmail, donorPhone,
         amount, purpose, petId,
         ssl: { tranId: tran_id, status: 'PENDING' }
@@ -125,10 +126,53 @@ const getDonations = asyncHandler(async (req, res) => {
     res.json({ success: true, data: donations });
 });
 
+// @desc    Get my donations
+// @route   GET /api/donations/my
+// @access  Private
+const getMyDonations = asyncHandler(async (req, res) => {
+    const donations = await Donation.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    res.json({ success: true, data: donations });
+});
+
+// @desc    SSLCommerz IPN (Instant Payment Notification)
+// @route   POST /api/donations/payment/ipn
+const paymentIpn = asyncHandler(async (req, res) => {
+    const payment = req.body;
+    const { tran_id, status, val_id } = payment;
+
+    // Verify tran_id exists
+    if (!tran_id) {
+        return res.status(400).send('Transaction ID missing');
+    }
+
+    const donation = await Donation.findOne({ 'ssl.tranId': tran_id });
+
+    if (donation) {
+        if (status === 'VALID' || status === 'VALIDATED') {
+            donation.ssl.status = 'VALID';
+            donation.ssl.valId = val_id;
+        } else if (status === 'FAILED') {
+            donation.ssl.status = 'FAILED';
+        } else if (status === 'CANCELLED') {
+            donation.ssl.status = 'CANCELLED';
+        }
+
+        // Save raw response for debugging/audit if needed (optional)
+        // donation.ssl.raw = JSON.stringify(payment);
+
+        await donation.save();
+        res.status(200).send('IPN Received and Updated');
+    } else {
+        res.status(404).send('Donation not found');
+    }
+});
+
 module.exports = {
     initDonation,
     paymentSuccess,
     paymentFail,
     paymentCancel,
-    getDonations
+    paymentIpn,
+    getDonations,
+    getMyDonations
 };

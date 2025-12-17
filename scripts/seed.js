@@ -154,6 +154,19 @@ const importData = async () => {
                 status: 'PENDING_REVIEW',
                 submittedByUserId: user1._id,
                 ownerContact: { name: 'John', phone: '017000', email: 'john@example.com' }
+            },
+            {
+                name: 'Charlie',
+                species: 'Dog',
+                breed: 'Beagle',
+                age: 2,
+                size: 'Medium',
+                gender: 'Male',
+                description: 'Happy go lucky.',
+                photos: ['https://images.unsplash.com/photo-1537151608828-ea2b11777ee8'],
+                status: 'ADOPTED',
+                submittedByUserId: user1._id,
+                ownerContact: { name: 'John Doe', phone: '01700000001', email: 'user@example.com' }
             }
         ]);
         console.log('Pets Imported'.green.inverse);
@@ -209,17 +222,43 @@ const importData = async () => {
         });
 
         // APPLICATIONS
-        await AdoptionApplication.create({
-            petId: pets[2]._id, // Rocky (Pending Adoption)
-            userId: user2._id,
-            applicantInfo: {
-                address: '123 Fake St',
-                experience: 'Had dogs before',
-                householdInfo: 'Single, no kids',
-                notes: 'I work from home'
+        await AdoptionApplication.create([
+            {
+                petId: pets[2]._id, // Rocky (Pending Adoption)
+                userId: user2._id,
+                applicantInfo: {
+                    address: '123 Fake St',
+                    experience: 'Had dogs before',
+                    householdInfo: 'Single, no kids',
+                    notes: 'I work from home'
+                },
+                status: 'PENDING'
             },
-            status: 'PENDING'
-        });
+            {
+                petId: pets[3]._id, // Luna (Adopted - Shelter Pet)
+                userId: user1._id, // User 1 adopts Luna
+                applicantInfo: {
+                    address: '456 Real St',
+                    experience: 'First cat',
+                    householdInfo: 'Large family',
+                    notes: 'Kids love cats'
+                },
+                status: 'APPROVED',
+                adminNote: 'Great fit for the family!'
+            },
+            {
+                petId: pets[5]._id, // Charlie (Adopted - User Submitted Pet)
+                userId: user2._id, // User 2 adopts Charlies from User 1
+                applicantInfo: {
+                    address: '789 Another St',
+                    experience: 'Love beagles',
+                    householdInfo: 'Couple',
+                    notes: 'We have a big yard'
+                },
+                status: 'APPROVED',
+                adminNote: 'Owner approved transfer.'
+            }
+        ]);
 
         // VOLUNTEERS
         await VolunteerApplication.create({
@@ -230,7 +269,6 @@ const importData = async () => {
             status: 'PENDING'
         });
 
-        // DONATIONS
         // DONATIONS
         await Donation.create([
             {

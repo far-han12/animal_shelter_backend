@@ -36,7 +36,11 @@ const getMyAdoptions = asyncHandler(async (req, res) => {
     }
 
     const applications = await AdoptionApplication.find(query)
-        .populate('petId', 'name photos status')
+        .populate({
+            path: 'petId',
+            select: 'name photos status',
+            populate: { path: 'submittedBy', select: 'name email phone' }
+        })
         .sort({ createdAt: -1 });
 
     res.json({ success: true, data: applications });
@@ -68,7 +72,7 @@ const getAdoptions = asyncHandler(async (req, res) => {
 
     const applications = await AdoptionApplication.find(query)
         .populate('petId', 'name')
-        .populate('userId', 'name email')
+        .populate('userId', 'name email phone')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit);
@@ -105,11 +109,17 @@ const updateAdoptionStatus = asyncHandler(async (req, res) => {
 
     await application.save();
 
-    // If approved, update pet status
+    // If approved, update pet status to ADOPTED
     if (status === 'APPROVED') {
         const pet = await Pet.findById(application.petId);
         if (pet) {
-            pet.status = 'PENDING_ADOPTION';
+            pet.status = 'ADOPTED';
+            await pet.save();
+        }
+    } else if (status === 'REJECTED') {
+        const pet = await Pet.findById(application.petId);
+        if (pet) {
+            pet.status = 'AVAILABLE';
             await pet.save();
         }
     }

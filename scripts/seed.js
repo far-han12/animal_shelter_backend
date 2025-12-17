@@ -218,7 +218,7 @@ const importData = async () => {
                 householdInfo: 'Single, no kids',
                 notes: 'I work from home'
             },
-            status: 'APPROVED'
+            status: 'PENDING'
         });
 
         // VOLUNTEERS

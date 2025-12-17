@@ -125,7 +125,7 @@ const paymentCancel = asyncHandler(async (req, res) => {
 // @route   GET /api/admin/donations
 // @access  Private/Admin
 const getDonations = asyncHandler(async (req, res) => {
-    const donations = await Donation.find({}).sort({ createdAt: -1 });
+    const donations = await Donation.find({}).populate('petId', 'name').sort({ createdAt: -1 });
     res.json({ success: true, data: donations });
 });
 
@@ -133,7 +133,7 @@ const getDonations = asyncHandler(async (req, res) => {
 // @route   GET /api/donations/my
 // @access  Private
 const getMyDonations = asyncHandler(async (req, res) => {
-    const donations = await Donation.find({ userId: req.user._id }).sort({ createdAt: -1 });
+    const donations = await Donation.find({ userId: req.user._id }).populate('petId', 'name').sort({ createdAt: -1 });
     res.json({ success: true, data: donations });
 });
 

@@ -231,12 +231,28 @@ const importData = async () => {
         });
 
         // DONATIONS
-        await Donation.create({
-            donorName: 'Generous Donor',
-            amount: 500,
-            purpose: 'GENERAL',
-            ssl: { tranId: 'TRX123', status: 'VALID' }
-        });
+        // DONATIONS
+        await Donation.create([
+            {
+                donorName: 'John Doe',
+                donorEmail: 'user@example.com',
+                donorPhone: '01700000001',
+                amount: 500,
+                purpose: 'GENERAL',
+                userId: user1._id, // Link to John Doe
+                ssl: { tranId: 'TRX123', status: 'VALID', valId: 'VAL123' }
+            },
+            {
+                donorName: 'John Doe',
+                donorEmail: 'user@example.com',
+                donorPhone: '01700000001',
+                amount: 1000,
+                purpose: 'SPONSOR_PET',
+                petId: pets[0]._id, // Sponsor Buddy
+                userId: user1._id, // Link to John Doe
+                ssl: { tranId: 'TRX456', status: 'VALID', valId: 'VAL456' }
+            }
+        ]);
 
         console.log('Data Imported!'.green.inverse);
         process.exit();

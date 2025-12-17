@@ -39,7 +39,7 @@ const getMyAdoptions = asyncHandler(async (req, res) => {
         .populate({
             path: 'petId',
             select: 'name photos status',
-            populate: { path: 'submittedBy', select: 'name email phone' }
+            populate: { path: 'submittedByUserId', select: 'name email phone' }
         })
         .sort({ createdAt: -1 });
 

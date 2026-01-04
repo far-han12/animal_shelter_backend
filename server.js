@@ -10,6 +10,13 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 // Load env vars
 dotenv.config();
 
+// Fix for SSLCommerz Sandbox SSL issues in development
+console.log(`Current NODE_ENV: ${process.env.NODE_ENV}`);
+if (process.env.NODE_ENV === 'development') {
+    console.log('Applying SSLCommerz Sandbox SSL Fix (NODE_TLS_REJECT_UNAUTHORIZED = 0)');
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 // Connect to database
 connectDB();
 

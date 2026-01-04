@@ -69,9 +69,14 @@ const initDonation = asyncHandler(async (req, res) => {
             throw new Error('SSLCommerz Init Failed');
         }
     } catch (error) {
-        console.error(error);
-        res.status(500);
-        throw new Error('Payment initialization error');
+        console.error('SSLCommerz Init Error:', error);
+        res.status(500).json({
+            message: 'Payment initialization error',
+            error: error.message,
+            stack: process.env.NODE_ENV === 'production' ? null : error.stack
+        });
+        // We do not throw here to allow the response to be sent
+        return; 
     }
 });
 
